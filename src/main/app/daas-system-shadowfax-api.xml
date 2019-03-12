@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:context="http://www.springframework.org/schema/context" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd">
+    <http:listener-config name="daas_experience_api-httpListenerConfig" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" />
+    <apikit:config name="daas-system-shadowfax-api-config" raml="daas-system-shadowfax-api.raml" consoleEnabled="false" doc:name="Router" keepRamlBaseUri="false" >
+        <apikit:flow-mapping resource="/track" action="get" flow-ref="shadowfax_flow"/>
+    </apikit:config>
+    <http:request-config name="shadowfax_HTTP_Request_Configuration" host="${shadowfax.http.host}" port="${shadowfax.http.port}" basePath="${shadowfax.http.basepath}" doc:name="HTTP Request Configuration" />
+    <context:property-placeholder location="properties/daas-system-shadowfax-api.properties,properties/daas-system-shadowfax-api-${mule.env}.properties" />
+
+  
+    <flow name="daas-system-shadowfax-api-main">
+        <http:listener config-ref="daas_experience_api-httpListenerConfig" path="/*" doc:name="HTTP" />
+                <set-session-variable variableName="messageId" value="#[message.inboundProperties.messageId == null ? message.id : message.inboundProperties.messageId] " doc:name="Set Message Id"/>
+        <apikit:router config-ref="daas-system-shadowfax-api-config" doc:name="APIkit Router" />
+        
+        <exception-strategy ref="global-exception-Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="daas-system-shadowfax-api-console">
+        <http:listener config-ref="daas_experience_api-httpListenerConfig" path="/console/*" doc:name="HTTP" />
+        <apikit:console config-ref="daas-system-shadowfax-api-config" doc:name="APIkit Console" />
+    </flow>
+    <flow name="post:/daasproviders:application/json:daas-system-shadowfax-api-config">
+        <logger message="DAAS system Shadowfax API Flow name is : #[mule:context.serviceName]" level="INFO" doc:name="Log Flow Name" />
+        <message-properties-transformer doc:name="Message Properties" scope="invocation">
+            <add-message-property key="vOperationType" value="#[message.inboundProperties.'http.query.params'.operationType]" />
+            <add-message-property key="vDeliveryProviderName" value="#[message.inboundProperties.'http.query.params'.delivery_providername]" />
+        </message-properties-transformer>
+        <logger message="'The Query param operation_type is ' #[flowVars.vOperationType]  and delivery_providername is #[flowVars.vDeliveryProviderName] " level="INFO" doc:name="Log QueryParam" />
+         
+        <choice doc:name="Check the Operation">
+            <when expression="#[flowVars.vDeliveryProviderName == 'runnr' &amp;&amp; flowVars.vOperationType == 'create_shipment']">
+                <flow-ref name="shadowfax-create-shipment-subflow" doc:name="shadowfax-create-shipment-subflow" />
+            </when>
+            <otherwise>
+                <flow-ref name="shadowfax-service-availablity-subflow" doc:name="shadowfax-service-availablity-subflow" />
+            </otherwise>
+        </choice>
+        <exception-strategy ref="global-exception-Strategy" doc:name="Reference Exception Strategy" />
+    </flow>
+    <sub-flow name="shadowfax-create-shipment-subflow">
+        <logger message="Sub Flow Name is: shadowfax-create-shipment-subflow" level="INFO" doc:name="Log_subFlow" />
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data\json.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	store_code: payload.store_id as :number,
+	pickup_contact_number: payload.merchant_pickup_details.contact_no,
+	order_details: {
+		client_order_id: payload.orderDetails.order_id,
+		order_value: payload.orderDetails.order_value
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="Payload before Invoke shadowfax Create Shipment API --- #[payload]" level="INFO" doc:name="Log Payload"/>
+       	<!--  <http:request config-ref="shadowfax_HTTP_Request_Configuration" path="${shadowfax.cretae.shipment.path}" method="${shadowfax.cretae.shipment.method}" doc:name="Invoke shadowfax Create Shipment API">
+            <http:request-builder>
+                <http:query-param paramName="operationType" value="#[flowVars.vOperationType]"/>
+                <http:query-param paramName="delivery_providername" value="#[flowVars.vDeliveryProviderName]"/>
+                <http:header headerName="messageID" value="#[message.id]"/>
+
+            </http:request-builder>
+        </http:request>
+ -->    </sub-flow>
+    <sub-flow name="shadowfax-service-availablity-subflow">
+        <logger message="Sub Flow Name is: shadowfax-service-availablity-subflow" level="INFO" doc:name="Log_subFlow" />
+
+        <dw:transform-message doc:name="Transform Message" metadata:id="1725cab1-3cce-40ed-8805-62bc131f9732">
+            <dw:input-payload doc:sample="sample_data\json_1.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	store_code: payload.store_id
+}
+]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="Payload before Invoke shadowfax Service Availablility API--- #[payload]" level="INFO" doc:name="Log Payloaf"/>
+      <!--   <http:request config-ref="shadowfax_HTTP_Request_Configuration" path="${shadowfax.service.availability.path}" method="${shadowfax.service.availability.method}" doc:name="Invoke shadowfax Service Availablility API">
+            <http:request-builder>
+                <http:query-param paramName="operationType" value="#[flowVars.vOperationType]"/>
+                <http:query-param paramName="delivery_providername" value="#[flowVars.vDeliveryProviderName]"/>
+                <http:header headerName="messageId" value="#[message.id]"/>
+
+            </http:request-builder>
+        </http:request>
+ -->    </sub-flow>
+      <flow name="shadowfax_flow">
+        <logger message="#[message.id]" level="INFO" doc:name="Log messageId" />
+        <set-variable variableName="operationType" value="#[message.inboundProperties.'http.query.params'.operationType]" doc:name="operationType" />
+        <choice doc:name="Route Based on OperationType">
+            <when expression="#[flowVars.operationType=='track_order']">
+                <flow-ref name="shadowfax_tracking_sub_flow" doc:name="route to shadowfax tracking sub flow" />
+            </when>
+            <otherwise>
+                <flow-ref name="shadowfax_cancelling_sub_flow" doc:name="route to shadowfax cancelling flow" />
+            </otherwise>
+        </choice>
+        <exception-strategy ref="global-exception-Strategy" doc:name="global-exception-Strategy" />
+    </flow>
+    <flow name="shadowfax_tracking_sub_flow">
+        <logger message="Flow Name : shadowfax_tracking_sub_flow #[message.id]" level="INFO" doc:name="Log messageId" />
+        <set-variable variableName="orderId" value="#[message.inboundProperties.'http.query.params'.orderId]" doc:name="orderId" />
+        <logger message="#[flowVars.orderId]" level="INFO" doc:name="orderId" />
+        <!-- <until-successful maxRetries="3" millisBetweenRetries="30000" synchronous="true" doc:name="Until Successful">
+	            <http:request config-ref="HTTP_Request_Configuration" path="/daasproviders" method="GET" doc:name="Invoke shadowfax target system">
+ 	                <http:request-builder>
+                    <http:uri-param paramName="orderId" value="#[flowVars.orderId]"/>
+                </http:request-builder>
+	             </http:request>
+        </until-successful> -->
+        <set-payload value="{ &quot;orderId&quot;: &quot;#[message.inboundProperties.'http.query.params'.orderId]&quot; }" doc:name="set_tracking_payload" />
+        <logger message="#[payload]" level="INFO" doc:name="payload"/>
+    </flow>
+    <flow name="shadowfax_cancelling_sub_flow">
+        <logger message="Flow Name: #[message.id]" level="INFO" doc:name="Log messageId" />
+        <set-variable variableName="orderId" value="#[message.inboundProperties.'http.query.params'.orderId]" doc:name="orderId" />
+        <logger message="#[flowVars.orderId]" level="INFO" doc:name="orderId" />
+       <!--  <until-successful maxRetries="5" synchronous="true" doc:name="Until Successful">
+             <http:request config-ref="HTTP_Request_Configuration" path="/daasproviders" method="GET" doc:name="Invoke shadowfax target system">
+                <http:request-builder>
+                    <http:uri-param paramName="orderId" value="#[flowVars.orderId]"/>
+                </http:request-builder>
+	             </http:request>
+         </until-successful> -->
+        <set-payload value="{ &quot;orderId&quot; : &quot;#[message.inboundProperties.'http.query.params'.orderId]&quot;, &quot;status&quot;  :  &quot;CANCELLED&quot;, &quot;reason&quot; :  &quot;NO REASON SPECIFIED&quot; }" doc:name="set_cancelling_payload" />
+        <logger message="#[payload]" level="INFO" doc:name="payload"/>
+    </flow>
+
+    
+
+</mule>

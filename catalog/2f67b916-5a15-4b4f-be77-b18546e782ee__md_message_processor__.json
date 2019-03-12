@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "shadowfax_request"
+        }
+    },
+    "id": "2f67b916-5a15-4b4f-be77-b18546e782ee",
+    "version": "5.2.0.0"
+}

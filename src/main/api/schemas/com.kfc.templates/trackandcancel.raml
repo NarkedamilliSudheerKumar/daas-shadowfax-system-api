@@ -1,0 +1,87 @@
+#%RAML 1.0 Library
+usage: used to get the data types
+
+types:
+  provider_order_details:
+    type: object
+    properties:
+      type?:
+        description: type of the provider [runnr/shadow fax]
+        type: string
+        example: runnr
+      order_id?:
+        displayName: order_id 
+        description: Provider/merchant order id
+        type: string
+        
+  merchant_details:
+    type: object
+    displayName: merchant_details
+    description: Providing the merchant details
+    properties: 
+      order_Id?:
+        displayName: order_id 
+        description: Provider/merchant order id
+        type: string
+      store_id?:
+        displayName: store_id 
+        description: Store id of the merchant
+        type: string
+  customer:
+    type: object
+    displayName: customer
+    description: Providing the customer details
+    properties:
+      name?:
+        displayName: name 
+        description: Name of the rider 
+        type: string
+      contactNo?:
+        displayName: contactNo 
+        description: contact nmber of customer
+        type: string
+      address?:
+        displayName: address 
+        description: Customer address details
+        type: string
+      city?:
+        displayName: city 
+        description: Name of the city
+        type: string
+  riderDetails:
+    type: object
+    displayName: riderDetails
+    description: Providing the rider Details
+    properties:
+      name?:
+        displayName: name 
+        description: Name of the rider 
+        type: string
+      contactNo?:
+        displayName: contactNo 
+        description: contact nmber of rider
+        type: string
+      vehicle_number?:
+        displayName: vehicle_number 
+        description: vehicle  number of the rider 
+        type: string
+      vehicle_name?:
+        displayName: vehicle_name 
+        description: vehicle name of the rider
+        type: string
+      geo:
+        type: object
+        displayName: geo
+        description: Providing the Geographic Details
+        properties:
+          latitude?:
+           displayName: latitude 
+           description: latitude of the rider
+           type: number
+           format: double
+          longitude?:
+           displayName: longitude 
+           description: longitude of the rider
+           type: number
+           format: double
+           

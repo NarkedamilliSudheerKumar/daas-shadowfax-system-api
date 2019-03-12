@@ -1,0 +1,138 @@
+#%RAML 1.0 Library
+usage: provides a set  data types in creating order  request body
+
+uses:
+  transection_details: /schemas/com.kfc.templates/common/retail_transection_details/1.0.0/retail_transection_details.raml
+  txn_details: /schemas/com.kfc.templates/common/retail_txn_details/1.0.0/retail_txn_details.raml
+  payments: /schemas/com.kfc.templates/common/retail_payments/retail_payments.raml
+  cardDetails: /schemas/com.kfc.templates/common/retail_cards/1.0.0/retail_cards.raml
+  userLogin: /schemas/com.kfc.templates/common/retail_user_login/1.0.0/retail_createdbyDetails.raml
+  store: /schemas/com.kfc.templates/common/retail_store/1.0.0/retail_store.raml
+  terminal: /schemas/com.kfc.templates/common/retail_terminal/1.0.0/retail_terminal.raml
+  customer: /schemas/com.kfc.templates/common/retail_customer/1.0.0/retail_customer.raml
+  schedule: /schemas/com.kfc.templates/common/retail_schedule/1.0.0/retail_schedule.raml
+  address: /schemas/com.kfc.templates/common/retail_address/1.0.0/retail_address.raml
+  item: /schemas/com.kfc.templates/common/retail_item/1.0.0/retail_item.raml
+
+
+
+types:
+ daasRequest:
+  description: Request body of DAAS Create
+  properties:
+   store_id?:
+    displayName: store_id
+    description: Store ID
+    type: store.id
+    maxLength: 100
+   terminalId?:
+    displayName: terminalId
+    description: Terminal ID
+    type: terminal.id
+    maxLength: 100
+   order_date?:
+    displayName: 
+    description: order date [YYYY-MM-DD hh24:mm]
+    type: string
+   callback_url?:
+    displayName: callback_url
+    description: Callback URL
+    type: string
+    maxLength: 100   
+   orderDetails:
+      displayName: orderDetails
+      description: orderDetails object
+      type: object
+      properties:
+       order_id:
+        displayName: order_id
+        description: merchant Unique Order Id
+        type: string
+        maxLength: 20
+       order_type:
+        displayName: order_type
+        description: order type
+        type: string
+        maxLength: 30
+       order_value:
+        displayName: order_value
+        description: total order amount with offset of max 2
+        type: number
+        format: double      
+        required: true
+       items?:
+        displayName: items
+        description: items
+        type: item.item []
+       schedule?:
+        displayName: schedule
+        description: schedule
+        type: schedule.schedule_times
+    
+   transactionDetails:
+    displayName: retail_transection_details
+    description: retail_transection_details
+    type: transection_details.transection_details     
+   merchant_pickup_details:
+     displayName: merchant_pickup_details
+     type: object
+     properties:
+      name?:
+        displayName: name
+        description: Name
+        type: string
+        maxLength: 100
+      contact_no?:
+        displayName: contact_no
+        description: contact_no
+        type: string
+        maxLength: 100
+      merchant_id?:
+        displayName: merchant_id
+        description: merchant_id
+        type: string
+        maxLength: 100
+      address?:
+       displayName: address
+       description: address object
+       type: address.address
+       
+   customer_drop_details:
+     displayName: customer_drop_details
+     type: object
+     properties:
+      name?:
+        displayName: name
+        description: Name
+        type: string
+        maxLength: 100
+      contact_no?:
+        displayName: contact_no
+        description: contact_no
+        type: string
+        maxLength: 100
+      customer_id?:
+        displayName: customer_id
+        description: customer_id
+        type: string
+        maxLength: 100
+      address?:
+       displayName: address
+       description: address object
+       type: address.address
+       
+   login_user:
+    type: object
+    properties:
+     created_by:
+      displayName: created_by
+      description: login user to pos system
+      type: string
+      maxLength: 50
+      required: true
+     created_datetime:
+      displayName: created_date_time
+      description:  Date time of the response  yyyy-MM-dd HH24:mm
+      type: string
+      required: true
+     

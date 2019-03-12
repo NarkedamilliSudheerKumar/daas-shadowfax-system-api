@@ -1,0 +1,157 @@
+#%RAML 1.0
+title: Daas-System-Runner-API
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/510e23bd-9695-4712-93cf-3bae56d897c5/daas # baseUri: /daas
+version: v1
+documentation: 
+ - title: Home
+   content: |
+     This API is used for daas create_shipment and service availability and trackre_sponse
+     it can be consumed by external systems
+     through HTTPS based APIs using POST & GET method
+mediaType: application/json
+protocols: HTTPS
+
+uses:
+ daas_request: /schemas/com.kfc.templates/daas_request/daas_request.raml
+ daas_response: /schemas/com.kfc.templates/daas_response/daas_response.raml
+ track_response: /schemas/com.kfc.templates/Dass_success_response.raml
+ error_response: /schemas/com.kfc.templates/Dass_Error_Response.raml
+types:
+ REQUEST: daas_request.daasRequest
+ RESPONSE: daas_response.daasResponse
+ TRACK_RESPONSE:  track_response.trackingresponse
+ ERROR_ESPONSE: error_response.ErrorResponse
+
+/daasproviders: 
+ description: |
+    This API request 3 kinds of operation, card enquiry , activation and redemption
+    with gift cards/value access cards and food court payment cards.
+    
+ post: 
+   description: |
+    
+   queryParameters: 
+    operationType:
+     description: type operation to be performed
+     required: true
+     type: string
+     enum: 
+        - service_availability
+        - create_shipment
+     maxLength: 30
+    delivery_providername:
+     description: Delivery Provider name 
+     required: true
+     type: string 
+     enum: 
+        - runnr
+        - shadowfax
+     maxLength: 30 
+   body: 
+     application/json:
+      type: REQUEST
+      example:  !include /samples/daas_post_request.json
+      
+   responses: 
+        200:
+          body:
+           application/json:
+            type: RESPONSE
+            example: !include /samples/daas_post_response.json
+        400:
+         body:
+          application/json:
+            type: RESPONSE
+            example: !include /samples/daas_response_for_errors.json
+        401:
+         body:
+           application/json:
+             type: RESPONSE
+             example: !include samples/daas_response_for_errors.json
+        404:
+         body:
+           application/json:
+             type: RESPONSE
+             example:
+                !include /samples/daas_response_for_errors.json
+        500:
+         body:
+          application/json:
+            type: RESPONSE
+            example: !include /samples/daas_response_for_errors.json
+
+/track:
+  description: |
+    This API request 2 kinds of operation Tracking and cancelling the order.
+  get:
+    headers:
+      Content-Type:
+          displayName: Content-type
+          description: Application/json
+          type: string
+          required: true
+      source_channel_name :
+          displayName: source_channel_name 
+          description: Source channel name from which transaction is made. 
+          type: string
+          required: true
+      target_channel_name  :
+          displayName: target_channel_name 
+          description: Target channel name for which transaction is made.  
+          type: string
+          required: true
+      
+    queryParameters:
+      delivery_providername:
+       description: delivery provider name 
+       required: true
+       maxLength: 30
+       type: string
+       enum: ['runnr','shadowfax']
+    
+      orderId: 
+       description: order ID of the provider either to track or  cancel order 
+       required: true
+       maxLength: 30
+       type: string
+       enum: ['runnr_orderid','shadowfax_orderid']
+  
+      operationType: 
+       description: type of the operation to be performed
+       required: true 
+       maxLength: 30
+       type: string
+       enum: ['track_order','cancel_order']
+
+    responses:
+        200:
+          body:
+            application/json:
+              type: RESPONSE
+              example: !include samples/Dass_success_response.raml
+        400:
+          body:
+             application/json:         
+                type: ERROR_ESPONSE
+                example: !include samples/Dass_Error_Response.raml  
+        500:
+          body:
+            type: ERROR_ESPONSE
+            example: !include samples/Dass_Error_Response.raml
+        404:
+          body:        
+            type: ERROR_ESPONSE
+            example: !include samples/Dass_Error_Response.raml      
+        202:
+          body:        
+            type: ERROR_ESPONSE
+            example: !include samples/Dass_Error_Response.raml
+
+              
+              
+
+                             
+              
+               
+              
+           

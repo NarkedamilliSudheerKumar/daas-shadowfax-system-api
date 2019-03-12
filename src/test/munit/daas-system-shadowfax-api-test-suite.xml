@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mock="http://www.mulesoft.org/schema/mule/mock"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration" mock-connectors="false" mock-inbounds="false"/>
+    <spring:beans>
+        <spring:import resource="classpath:daas-system-shadowfax-api.xml"/>
+        <spring:import resource="classpath:globalexception.xml"/>
+    </spring:beans>
+    <munit:test name="daas-system-shadowfax-api-test-suite-create-shipment-test" description="Test">
+          <mock:when messageProcessor=".*:.*" doc:name="Mock Invoke shadowfax Create Shipment API">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Invoke shadowfax Create Shipment API']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="{&quot;status&quot;:{&quot;statusCode&quot;:&quot;&quot;,&quot;statusMessage&quot;:&quot;&quot;,&quot;tracking_link&quot;:&quot;&quot;},&quot;order_value&quot;:&quot;&quot;,&quot;provider_order_details&quot;:{&quot;type&quot;:&quot;&quot;,&quot;order_id&quot;:&quot;&quot;},&quot;merchant_details&quot;:{&quot;order_Id&quot;:&quot;&quot;,&quot;store_id&quot;:&quot;&quot;},&quot;riderDetails&quot;:{&quot;name&quot;:&quot;&quot;,&quot;contact_no&quot;:&quot;&quot;},&quot;service_avail_details&quot;:{&quot;isServiceable&quot;:&quot;&quot;,&quot;schedule_times&quot;:{&quot;eta_for_pickup&quot;:&quot;&quot;,&quot;eta_to_drop&quot;:&quot;&quot;,&quot;total_eta&quot;:&quot;&quot;}}}"/>
+
+        </mock:when>
+         <munit:set payload="#[getResource('sample_data/daas-service-shipment-request.json').asString()]" mimeType="application/json" doc:name="Set Request">
+            <munit:inbound-properties>
+               <munit:inbound-property key="http.query.params" value="#[['operationType':'create_shipment','delivery_providername':'runnr']]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="post:/daasproviders:application/json:daas-system-shadowfax-api-config" doc:name="post:/daasproviders:application/json:daas-system-shadowfax-api-config"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Invoke shadowfax Create Shipment API']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+        <munit:assert-on-equals expectedValue="{&quot;status&quot;:{&quot;statusCode&quot;:&quot;&quot;,&quot;statusMessage&quot;:&quot;&quot;,&quot;tracking_link&quot;:&quot;&quot;},&quot;order_value&quot;:&quot;&quot;,&quot;provider_order_details&quot;:{&quot;type&quot;:&quot;&quot;,&quot;order_id&quot;:&quot;&quot;},&quot;merchant_details&quot;:{&quot;order_Id&quot;:&quot;&quot;,&quot;store_id&quot;:&quot;&quot;},&quot;riderDetails&quot;:{&quot;name&quot;:&quot;&quot;,&quot;contact_no&quot;:&quot;&quot;},&quot;service_avail_details&quot;:{&quot;isServiceable&quot;:&quot;&quot;,&quot;schedule_times&quot;:{&quot;eta_for_pickup&quot;:&quot;&quot;,&quot;eta_to_drop&quot;:&quot;&quot;,&quot;total_eta&quot;:&quot;&quot;}}}" actualValue="#[payload]" doc:name="Assert Equals"/>
+    </munit:test>
+    
+    <munit:test name="daas-system-shadowfax-api-test-suite-service-availablity-test" description="Test">
+          <mock:when messageProcessor=".*:.*" doc:name="Mock Invoke shadowfax Service Availablility API">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Invoke shadowfax Service Availablility API']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="{&quot;status&quot;:{&quot;statusCode&quot;:&quot;&quot;,&quot;statusMessage&quot;:&quot;&quot;,&quot;tracking_link&quot;:&quot;&quot;},&quot;order_value&quot;:&quot;&quot;,&quot;provider_order_details&quot;:{&quot;type&quot;:&quot;&quot;,&quot;order_id&quot;:&quot;&quot;},&quot;merchant_details&quot;:{&quot;order_Id&quot;:&quot;&quot;,&quot;store_id&quot;:&quot;&quot;},&quot;riderDetails&quot;:{&quot;name&quot;:&quot;&quot;,&quot;contact_no&quot;:&quot;&quot;},&quot;service_avail_details&quot;:{&quot;isServiceable&quot;:&quot;&quot;,&quot;schedule_times&quot;:{&quot;eta_for_pickup&quot;:&quot;&quot;,&quot;eta_to_drop&quot;:&quot;&quot;,&quot;total_eta&quot;:&quot;&quot;}}}"/>
+
+        </mock:when>
+         <munit:set payload="#[getResource('sample_data/daas-service-shipment-request.json').asString()]" mimeType="application/json" doc:name="Set Request">
+            <munit:inbound-properties>
+               <munit:inbound-property key="http.query.params" value="#[['operationType':'service_availability','delivery_providername':'shadowfax']]"/>
+            </munit:inbound-properties>
+        </munit:set>
+        <flow-ref name="post:/daasproviders:application/json:daas-system-shadowfax-api-config" doc:name="post:/daasproviders:application/json:daas-system-shadowfax-api-config"/>
+        <mock:verify-call messageProcessor=".*:.*" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Invoke shadowfax Service Availablility API']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+        <munit:assert-on-equals expectedValue="{&quot;status&quot;:{&quot;statusCode&quot;:&quot;&quot;,&quot;statusMessage&quot;:&quot;&quot;,&quot;tracking_link&quot;:&quot;&quot;},&quot;order_value&quot;:&quot;&quot;,&quot;provider_order_details&quot;:{&quot;type&quot;:&quot;&quot;,&quot;order_id&quot;:&quot;&quot;},&quot;merchant_details&quot;:{&quot;order_Id&quot;:&quot;&quot;,&quot;store_id&quot;:&quot;&quot;},&quot;riderDetails&quot;:{&quot;name&quot;:&quot;&quot;,&quot;contact_no&quot;:&quot;&quot;},&quot;service_avail_details&quot;:{&quot;isServiceable&quot;:&quot;&quot;,&quot;schedule_times&quot;:{&quot;eta_for_pickup&quot;:&quot;&quot;,&quot;eta_to_drop&quot;:&quot;&quot;,&quot;total_eta&quot;:&quot;&quot;}}}" actualValue="#[payload]" doc:name="Assert Equals"/>
+    </munit:test>
+</mule>

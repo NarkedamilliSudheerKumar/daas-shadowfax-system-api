@@ -1,0 +1,35 @@
+#%RAML 1.0 Library
+usage:  provides a set  data types that  occur in Track response body
+
+uses:
+ types: /schemas/com.kfc.templates/trackandcancel.raml
+
+types:
+ trackingresponse:
+  type: object
+  description: response body of Track/Cancel
+  properties:
+    statusCode:
+      displayName: statusCode 
+      description: Status code of the order
+      type: string
+    statusMessage:
+      displayName: statusMessage 
+      description: status message of the order
+      type: string
+    order_value:
+      displayName: order_value 
+      description: order value 
+      type: string
+    provider_order_details: types.provider_order_details
+    merchant_details: types.merchant_details
+    customer: types.customer
+    riderDetails: types.riderDetails 
+   
+    total_eta:
+      displayName: total_eta 
+      description: Total time for delivery in minutes
+      type: string
+    
+    
+  

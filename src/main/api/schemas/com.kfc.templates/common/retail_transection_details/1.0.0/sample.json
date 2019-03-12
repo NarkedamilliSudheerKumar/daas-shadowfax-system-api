@@ -1,0 +1,10 @@
+  {
+  "transactionDetails": {
+    "amount": {
+      "To_Be_Collected": 100.23,
+      "To_Be_Paid": 325.68
+    },
+    "is_paid": ""
+  }
+  }
+  

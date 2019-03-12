@@ -1,0 +1,100 @@
+#%RAML 1.0 Library
+
+
+usage: provides a set  data types in creating order  response body
+types:
+  daasResponse:
+   description: Request body of DAAS Create
+  status:
+   type: object
+   properties:
+     status_code:
+      type: string
+      description: status code
+      maxLength: 20
+      required: false
+     status_message:
+      type: string
+      description: status code
+      maxLength: 20
+      required: false
+     tracking_link:
+      type: string
+      description: Link for tracking
+      maxLength: 50
+      required: false
+  order_values:
+   type: object
+   properties:
+     provider_order_details:
+      type: object
+      properties:
+       type: 
+        type: string
+        description: type of the provider [runnr/shadowfax]
+        maxLength: 50
+        required: false
+       order_id:
+        type: string
+        description: Provider order id
+        maxLength: 25
+        required: false 
+  marchent_details:
+   type: object
+   properties:
+     order_id:
+      type: string
+      description: Merchant order id 
+      maxLength: 20
+      required: false
+     store_id:
+      type: string
+      description: merchant store id
+      maxLength: 20
+      required: false
+  rider_details:
+   type: object
+   properties:
+     name:
+      type: string
+      description:  Name of the rider 
+      maxLength: 20
+      required: false
+     contact_number:
+      type: string
+      description:  Contact number of the rider
+      maxLength: 10
+      required: false
+  service_available_details:
+   type: object
+   properties:
+    is_service_available:
+     type: boolean
+     description: checking service availability
+     required: false
+    schedule_time:
+     type: object
+     properties:
+       eta_for_pickup:
+        type: string
+        description: expected time for pickup in mins
+        maxLength: 20
+        required: false
+       eta_to_drop:
+        type: string
+        description: expected time to drop
+        maxLength: 20
+        required: false
+       total_eta:
+        type: string
+        description: Total time for delivery in minutes 
+        maxLength: 20
+        required: false
+
+     
+    
+    
+
+
+
+ 

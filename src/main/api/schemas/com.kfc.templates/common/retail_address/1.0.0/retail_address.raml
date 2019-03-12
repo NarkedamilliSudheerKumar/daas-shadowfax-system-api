@@ -1,0 +1,55 @@
+#%RAML 1.0 Library
+usage: provides a set of reusable data types that commonly occur in address definitions
+
+
+
+types: 
+ address:
+  type: object
+  properties:
+   address1:
+    displayName: address1
+    description: address line 1
+    maxLength: 100
+    type: string
+   address2:
+    displayName: address2
+    description: address line 2
+    maxLength: 100
+    type: string
+   locality:
+    displayName: locality
+    description:  locality
+    maxLength: 100
+    type: string
+   city:
+    displayName: city
+    description: city name
+    maxLength: 100
+    type: string
+   zip_code:
+    displayName: zip_code
+    description: zip_code name
+    maxLength: 100
+    type: string
+   location:
+    displayName: location
+    description: location
+    type: object
+    properties:
+       latitude:
+        displayName: latitude
+        description: latitude detail
+        type: string
+       longitutde:
+        displayName: longitutde
+        description:  longitutde details
+        type: string
+
+
+
+
+     
+
+
+       

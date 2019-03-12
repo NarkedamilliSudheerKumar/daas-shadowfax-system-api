@@ -1,0 +1,30 @@
+#%RAML 1.0  Library
+
+usage: provides a set of reusable data types that commonly occur in 
+
+types:
+  transection_details:
+   displayName: transection_details
+   description: transection_details
+   type: object
+   properties:
+      amount: {}   
+      to_be_collected:
+       displayName: to-be_collected
+       description: Amount that needs to be collected from the customer with offset of max 2
+      type: number
+      to_be_paid:
+       displayName: to_be_paid
+       description: Amount that has to be paid at the pickup location/ Default value is equal to amount to be collected with offset of max 2..   
+       type: number
+       format: double
+      is_paid:
+       displayName: is_paid
+       description: to check is amount paid by customer
+       type: boolean
+      
+     
+     
+  
+ 
+ 

@@ -1,0 +1,29 @@
+
+{
+  "status": {
+    "statusCode": "",
+    "statusMessage": "",
+    "tracking_link": ""
+  },
+  "order_value": "",
+  "provider_order_details": {
+    "type": "",
+    "order_id": ""
+  },
+  "merchant_details": {
+    "order_Id": "",
+    "store_id": ""
+  },
+  "riderDetails": {
+    "name": "",
+    "contact_no": ""
+  },
+  "service_avail_details": {
+    "isServiceable": "",
+    "schedule_times": {
+      "eta_for_pickup": "",
+      "eta_to_drop": "",
+      "total_eta": ""
+    }
+  }
+}

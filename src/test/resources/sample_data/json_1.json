@@ -1,0 +1,61 @@
+{
+  "callback_url": "????",
+  "customer_drop_details": {
+    "address": {
+      "address1": "????",
+      "address2": "????",
+      "city": "????",
+      "locality": "????",
+      "location": {
+        
+      },
+      "zip_code": "????"
+    },
+    "contact_no": "????",
+    "customer_id": "????",
+    "name": "????"
+  },
+  "login_user": {
+    "created_by": "????",
+    "created_datetime": "????"
+  },
+  "merchant_pickup_details": {
+    "address": {
+      "address1": "????",
+      "address2": "????",
+      "city": "????",
+      "locality": "????",
+      "location": {
+        
+      },
+      "zip_code": "????"
+    },
+    "contact_no": "????",
+    "merchant_id": "????",
+    "name": "????"
+  },
+  "orderDetails": {
+    "items": [
+      {
+        
+      }
+    ],
+    "order_id": "????",
+    "order_type": "????",
+    "order_value": 2,
+    "schedule": {
+      "preparation_time": 1,
+      "scheduled_time": "????"
+    }
+  },
+  "order_date": "????",
+  "store_id": "sudhi",
+  "terminalId": "????",
+  "transactionDetails": {
+    "amount": "????",
+    "is_paid": true,
+    "to_be_collected": "????",
+    "to_be_paid": 2,
+    "type": 2
+  }
+}
